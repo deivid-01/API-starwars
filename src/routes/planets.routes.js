@@ -1,9 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const trackpointCtrl = require('../controllers/trackpoint.controller');
+const planetCtrl = require('../controllers/planets.controller');
 
-router.get('/', trackpointCtrl.getAll);
-router.post('/', trackpointCtrl.createOne);
-router.post('/file', trackpointCtrl.createAll);
+
+
+router.get('/:id',planetCtrl.getOne);
+router.get('/',planetCtrl.getAll);
+
+router.post('/',planetCtrl.createOne);
+//router.post('/',planetCtrl.createMany);
+
+router.put('/:id',planetCtrl.updateOne);
+
+router.delete('/:id',planetCtrl.deleteOne);
+router.delete('/',planetCtrl.deleteMany);
 
 module.exports = router;

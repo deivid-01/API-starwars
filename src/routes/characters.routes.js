@@ -8,11 +8,9 @@ router.get('/:id',characterCtrl.getOne);
 router.get('/',characterCtrl.getAll);
 
 router.post('/',characterCtrl.createOne);
-//router.post('/',characterCtrl.createMany);
-
 router.put('/:id',characterCtrl.updateOne);
 
 router.delete('/:id',characterCtrl.deleteOne);
-router.delete('/',characterCtrl.deleteMany);
+router.delete('/',characterCtrl.deleteAll);
 
 module.exports = router;

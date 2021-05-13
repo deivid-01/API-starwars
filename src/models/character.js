@@ -4,19 +4,19 @@ const {Schema} = moongose;
 
 const CharacterSchema = new Schema({
 
-    name : { type:String},
-    height : { type:String},
-    mass : { type:String},
-    hair_color : { type:String},
-    skin_color : { type:String},
-    eye_color : { type:String},
-    birth_year : { type:String},
-    gender : { type:String},
+    name : { type:String, required: true},
+    height : { type:String,default:""},
+    mass : { type:String, default:""},
+    hair_color : { type:String, default:""},
+    skin_color : { type:String, default:""},
+    eye_color : { type:String, default:""},
+    birth_year : { type:String, default:""},
+    gender : { type:String, default:""},
     homeworld : {type: Schema.Types.ObjectId, ref :'Planet'},
     vehicles : [ {type: Schema.Types.ObjectId, ref :'Vehicle'} ],
     starships : [ {type: Schema.Types.ObjectId, ref :'Starship'} ],
-    created : { type:String}, //Must be Date type
-    edited : {type:String},//Must be Date type
+    created : {type:String, default:Date(Date.now)}, 
+    edited : {type:String, default:Date(Date.now)},
     url : {type:String} //Assign own url
 });
 

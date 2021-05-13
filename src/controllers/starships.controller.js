@@ -38,7 +38,7 @@ starshipCtrl.deleteOne = async( req,res) => {
 
 starshipCtrl.deleteMany = async(req,res)=>{
     await Starship.deleteMany({});
-    res.json({"msg":"All Starships has been deleted}"});
+    res.json({"msg":"All Starships has been deleted"});
 
 }
 

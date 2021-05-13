@@ -4,19 +4,18 @@ const {Schema} = moongose;
 
 const PlanetSchema = new Schema({
 
-    name : { type:String},
-    rotation_period : { type:String},
-    orbital_period : { type:String},
-    diameter : { type:String},
-    climate : { type:String},
-    gravity : { type:String},
-    terrain : { type:String},
-    surface_water : {type:String},
-    population : {type:String},
+    name : { type:String, required: true},
+    rotation_period : { type:String, default:""},
+    orbital_period : { type:String}, default:"",
+    diameter : { type:String, default:""},
+    climate : { type:String, default:""},
+    gravity : { type:String, default:""},
+    terrain : { type:String, default:""},
+    surface_water : {type:String, default:""},
+    population : {type:String, default:""},
     residents : [ {type: Schema.Types.ObjectId, ref :'Character'} ],
-    //Later
-    created : { type:String}, //Must be Date type
-    edited : {type:String},//Must be Date type
+    created : {type:String, default:Date(Date.now)}, 
+    edited : {type:String, default:Date(Date.now)},
     url : {type:String} //Assign own url
 
 });

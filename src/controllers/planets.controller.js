@@ -1,5 +1,5 @@
 const Planet = require('../models/planet');
-const Character = require('../models/character');
+const character_planetCtrl = require('./character-planet.controller');
 
 const planetCtrl = {}
 //Post
@@ -12,12 +12,11 @@ planetCtrl.createOne = async(req,res) => {
         await planet.save(async(err)=>{
             if( err) return  res.status(400).json({"msg":err.message});  
 
-
             if (planet.residents!=null)
             {
-                await characterCtrl.addHomeWorld(planet._id,planet.residents);
+                await character_planetCtrl.addHomeworld(planet._id,planet.residents);
             }
-            return  res.status(200).json({'msg':'Planet saved' })    
+            return  res.status(200).json({'msg':'Planet saved','id':planet._id })    
         });
     }
     catch(err)
@@ -72,18 +71,12 @@ planetCtrl.updateOne = async(req,res) =>{
         {
             if(planet.residents != null)
             {
-                //Delete home
-                planet.residents.forEach(async (resident_id)=>
-                {
-                    var character = await Character.findById(resident_id);
-                    character.homeworld = null;
-                    character.save();
-                })
+                //Delete home character
+                await  character_planetCtrl.deleteHomeworld(planet.residents);              
             }
-            //Add Planet to residents
-
+                //Add home character        
+            await character_planetCtrl.addHomeworld(planet._id,req.body.residents,res);   
         }
-
 
         await Planet.findByIdAndUpdate(req.params.id,req.body);
         res.status(201).json({msg:' Planet uploaded'});
@@ -97,40 +90,39 @@ planetCtrl.updateOne = async(req,res) =>{
 }
 //Delete
 planetCtrl.deleteOne = async( req,res) => {
-    await Planet.findByIdAndDelete(req.params.id);
-    res.json({"msg":"Planet deleted"});
-
-}
-
-planetCtrl.deleteMany = async(req,res)=>{
-    await Planet.deleteMany({});
-    res.json({"msg":"All Planets has been deleted"});
-
-}
-
-planetCtrl.deleteAllResidents = async()=>{
-    var planets = await Planet.find();
-    planets.forEach(planet => {
-        planet.residents = []
-        planet.save();       
-    });
-}
-
-planetCtrl.addResident = async(planet_id,resident_id)=>{
-    //Saving Character in planet
-    var planet = await Planet.findById(planet_id);
-    if(!planet.residents.includes(resident_id))
+    try
     {
-        planet.residents.push(resident_id);
-        await planet.save();
+        //deleteHomweworldOfResidents
+        var planet = await  Planet.findById(req.params.id);
+        if ( planet.residents!=null)
+        {
+            await character_planetCtrl.deleteHomeworld(planet.residents);
+        }
+
+        await Planet.findByIdAndDelete(req.params.id);
+        return res.status(200).json({"msg":"Planet deleted"});
     }
+    catch(err)
+    {
+        return res.status(400).json({"msg":err.message});
+    }
+
 }
 
-planetCtrl.deleteResident = async(planet_id,resident_id)=>
-{
-    var planet =  await Planet.findById(planet_id);
-    planet.residents= planet.residents.filter((resident)=>String(resident._id).localeCompare(resident_id)!=0)
-    await planet.save();
+planetCtrl.deleteAll = async(req,res)=>{
+    try{
+        //Delete homeworld from Planets
+        
+      await character_planetCtrl.deleteAllHomeworlds();
+      await Planet.deleteMany({});
+      return res.status(200).json({"msg":"All Planets has been deleted"});
+  }
+  catch(err)
+  {
+      return res.status(400).json({"msg":err.message});
+  }
+
 }
+
 
 module.exports = planetCtrl;

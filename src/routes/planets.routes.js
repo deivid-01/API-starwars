@@ -13,6 +13,6 @@ router.post('/',planetCtrl.createOne);
 router.put('/:id',planetCtrl.updateOne);
 
 router.delete('/:id',planetCtrl.deleteOne);
-router.delete('/',planetCtrl.deleteMany);
+router.delete('/',planetCtrl.deleteAll);
 
 module.exports = router;

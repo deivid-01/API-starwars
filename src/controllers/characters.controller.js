@@ -32,7 +32,11 @@ characterCtrl.createOne = async(req,res) => {
 characterCtrl.getOne = async(req,res) =>{
     try
     {
-        await Character.findById(req.params.id).populate('homeworld','name').exec(function(err,character){
+        await Character.findById(req.params.id).
+        populate('homeworld','name').
+        populate('vehicles','name').
+        populate('starships','name').
+        exec(function(err,character){
             if (err)  return res.status(400).json({"msg":"Character not found"})
             return res.status(200).json(character)       
         });
@@ -48,10 +52,13 @@ characterCtrl.getAll = async(req,res) =>{
 
     try
     {
-        await Character.find((err,findedData)=>{
-            Character.populate(findedData,{path:"homeworld",select:"name"},function(err,characters){
-                return res.status(200).json(characters);
-            });
+        await Character.find(req.params.id).
+        populate('homeworld','name').
+        populate('vehicles','name').
+        populate('starships','name').
+        exec(function(err,characters){
+            if (err)  return res.status(400).json({"msg":"Characters not found"})
+            return res.status(200).json(characters)       
         });
     }
     catch(err)
@@ -62,24 +69,29 @@ characterCtrl.getAll = async(req,res) =>{
 }
 //Put
 characterCtrl.updateOne = async(req,res) =>{
-    
     req.body.edited=Date(Date.now);
     try
-    {             
-        var newPlanet = req.body.homeworld;
-        var previousPlanet=(await Character.findById(req.params.id)).homeworld;
-
-        if( newPlanet!=null)
-        {
-            if (previousPlanet != null)
-            {
-                await character_planetCtrl.deleteResident(previousPlanet,req.params.id);               
-            }
-
-            await character_planetCtrl.addResident(newPlanet,req.params.id);             
-        }
+    {   
+        var character         = await Character.findById(req.params.id);
         
+        //New data          
+        var newPlanet         = req.body.homeworld;
+        var newVehicles       = req.body.vehicles;
+        var newStarships      = req.body.starships;
+
+        //Previous data
+        var previousPlanet    = character.homeworld;
+        var previousVehicles  = character.vehicles;
+        var previousStarships = character.starships;
+
+ 
+        //Update data
+        await character_planetCtrl.updateResident(previousPlanet,newPlanet,character._id);   
+        await character_planetCtrl.updatePilot(previousVehicles,newVehicles,character._id);   
+        await character_planetCtrl.updatePilotStarship(previousStarships,newStarships,character._id);   
+    
         await Character.findByIdAndUpdate(req.params.id,req.body);
+        
         return res.status(200).json({"msg":"Character updated"});
 
     }

@@ -4,21 +4,20 @@ const {Schema} = moongose;
 
 const VehicleSchema = new Schema({
 
-    name : { type:String},
-    model : { type:String},
-    manufacturer : { type:String},
-    cost_in_credits : { type:String},
-    length : { type:String},
-    max_atmosphering_speed : { type:String},
-    crew : { type:String},
-    passengers : { type:String},
-    cargo_capacity : {type:String},
-    consumables : {type:String},
-    vehicle_class : {type:String},
+    name : { type:String, required:true},
+    model : { type:String, default:""},
+    manufacturer : { type:String, default:""},
+    cost_in_credits : { type:String, default:""},
+    length : { type:String, default:""},
+    max_atmosphering_speed : { type:String, default:""},
+    crew : { type:String, default:""},
+    passengers : { type:String, default:""},
+    cargo_capacity : {type:String}, default:"",
+    consumables : {type:String, default:""},
+    vehicle_class : {type:String, default:""},
     pilots : [ {type: Schema.Types.ObjectId, ref :'Character'} ],
-    //Later
-    created : { type:String}, //Must be Date type
-    edited : {type:String},//Must be Date type
+    created : {type:String, default:Date(Date.now)}, 
+    edited : {type:String, default:Date(Date.now)},
     url : {type:String} //Assign own url
 
 });

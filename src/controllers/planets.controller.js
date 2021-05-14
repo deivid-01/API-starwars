@@ -4,13 +4,12 @@ const planet = require('../models/planet');
 const planetCtrl = {}
 //Post
 planetCtrl.createOne = async(req,res) => {
-
+    console.log("HOLAAS");
+    console.log(res);
     try
-    {
-        
-        
+    {   
         var planet = new Planet(req.body);
-
+          
         await planet.save(async(err)=>{
 
             if( err) return  res.status(400).json({"msg":err.message});  
@@ -25,9 +24,41 @@ planetCtrl.createOne = async(req,res) => {
     }
     catch(err)
     {
+        console.log(err);
         return res.status(400).json({"msg":err.message});
     }  
 }
+planetCtrl.createManyFromSWAPI = async(planetsData) => {
+
+    await Promise.all(planetsData.map(async(planetData)=>{
+        delete planetData.residents;
+        delete planetData.films;
+        delete planetData.created;
+        delete planetData.edited;
+        try
+        {
+            var planet = new Planet(planetData);
+          
+            await planet.save(async(err)=>{
+    
+                if( err) throw err;                 
+                //Delete residents in previous Planets
+                await charHomeWorldHandler.findAndDeleteHomeworldOfMany(planet.residents);
+                //add resident to new planet
+                await charHomeWorldHandler.addHomeworldToMany(planet.residents,planet._id); 
+
+            });
+        }
+        catch(err)
+        {
+        console.log(err);
+
+        }
+        
+    }));
+
+}
+
 //Get
 planetCtrl.getOne = async(req,res) =>{
     try
@@ -110,10 +141,12 @@ planetCtrl.deleteAll = async(req,res)=>{
       await Planet.deleteMany({},(err,planets)=>{
         
       });
+      if(res!=null)
       return res.status(200).json({"msg":"All Planets has been deleted"});
   }
   catch(err)
   {
+    if(res!=null)
       return res.status(400).json({"msg":err.message});
   }
 

@@ -29,6 +29,37 @@ characterCtrl.createOne = async(req,res) => {
 
     }    
 }
+characterCtrl.createManyFromSWAPI = async(charactersData) => {
+
+    await Promise.all(charactersData.map(async(characterData)=>{
+        delete characterData.homeworld;
+        delete characterData.vehicles;
+        delete characterData.starships;
+        delete characterData.films;
+        delete characterData.created;
+        delete characterData.edited;
+        try
+        {
+            var character=  new Character(characterData);
+    
+            await character.save( async(err)=>{
+        
+                if( err) return  console.log(err); 
+        
+               await  planetResidentHandler.addResident (character.homeworld,character._id);
+               await  vehiclePilotHandler.addPilotToMany(character.vehicles,character._id);
+               await  starshipPilotHandler.addPilotToMany(character.starships,character._id);
+  
+            });
+        }
+        catch(err)
+        {
+        console.log(err);
+        }
+        
+    }));
+
+}
 //Get
 characterCtrl.getOne = async(req,res) =>{
     try
@@ -138,10 +169,12 @@ characterCtrl.deleteAll = async(req,res)=>{
         await vehiclePilotHandler.deleteAllPilots();
         await starshipPilotHandler.deleteAllPilots();
         await Character.deleteMany({});
+        if (res!=null)
         return res.status(200).json({"msg":"All Characters has been deleted"});
     }
     catch(err)
     {
+        if(res!=null)
         return res.status(400).json({"msg":err.message});
     }
 }

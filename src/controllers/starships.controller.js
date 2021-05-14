@@ -22,6 +22,33 @@ starshipCtrl.createOne = async(req,res) => {
 
     }  
 }
+starshipCtrl.createManyFromSWAPI = async(starshipsData) => {
+
+    await Promise.all(starshipsData.map(async(starshipData)=>{
+        delete starshipData.pilots;
+        delete starshipData.films;
+        delete starshipData.created;
+        delete starshipData.edited;
+        try
+        {
+            var starship = new Starship(starshipData);
+
+            await starship.save(async(err)=>{
+                if( err) return  console.log(err);
+                
+                await charStarshipHandler.addStarshipToMany(starship.pilots,starship._id);
+    
+            });
+        }
+        catch(err)
+        {
+           console.log(err);
+    
+        }  
+        
+    }));
+
+}
 //Get
 starshipCtrl.getOne = async(req,res) =>{
     try
@@ -69,11 +96,13 @@ starshipCtrl.updateOne = async(req,res) =>{
         await charStarshipHandler.updateStarship(starship.pilots,req.body.pilots,starship._id);
 
         await Starship.findByIdAndUpdate(req.params.id,req.body);
-        res.status(201).json({msg:' Starship uploaded'});
+      
+            return res.status(201).json({msg:' Starship uploaded'});
     }
     catch(err)
     {
-        return res.status(400).json({"msg":err.message});
+      
+            return res.status(400).json({"msg":err.message});
 
     }
 
@@ -102,10 +131,13 @@ starshipCtrl.deleteAll = async(req,res)=>{
     try{        
       await charStarshipHandler.deleteAllStarships();
       await Starship.deleteMany({});
-      return res.status(200).json({"msg":"All Starships has been deleted"});
+      
+      if(res!=null)
+        return res.status(200).json({"msg":"All Starships has been deleted"});
   }
   catch(err)
   {
+    if(res!=null)
       return res.status(400).json({"msg":err.message});
   }
 

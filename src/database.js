@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-
-const URI = 'mongodb://localhost/starwars';
+require('dotenv').config({path:'variables.env'});
+const URI = process.env.DB_URL;
 
 mongoose.connect( URI, { useNewUrlParser: true , useUnifiedTopology:true, useFindAndModify:false} )
-    .then(db => console.log("DB is connected"))
+    .then(db => console.log("Database Connected"))
     .catch( err => console.error(err));
 
 module.exports = mongoose ; 

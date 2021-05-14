@@ -4,10 +4,17 @@ const characterCtrl = require('../controllers/characters.controller');
 const planetCtrl = require('../controllers/planets.controller');
 const starshipCtrl = require('../controllers/starships.controller');
 const vehicleCtrl = require('../controllers/vehicles.controller');
+const planetResidentHandler = require('../handlers/planet/planet.resident.handler');
 
 const swapiCtrl = {};
 
 const BASE_URL = "https://swapi.dev/api"
+
+swapiCtrl.test = async(req,res)=>{
+  console.log(req.body.url);
+  var  planet =  await planetResidentHandler.findPlanetByURL(req.body.url);
+   res.json(planet);
+}
 
 swapiCtrl.resetData = async(req,res)=>{
     

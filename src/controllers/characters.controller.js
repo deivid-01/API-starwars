@@ -32,16 +32,15 @@ characterCtrl.createOne = async(req,res) => {
 characterCtrl.createManyFromSWAPI = async(charactersData) => {
 
     await Promise.all(charactersData.map(async(characterData)=>{
-        delete characterData.homeworld;
-        delete characterData.vehicles;
-        delete characterData.starships;
-        delete characterData.films;
-        delete characterData.created;
-        delete characterData.edited;
         try
-        {
+        {   
+        
+            characterData.homeworld =  await planetResidentHandler.findPlanetByURL(characterData.homeworld);
+            characterData.vehicles =  await vehiclePilotHandler.findVehiclesByURL(characterData.vehicles);
+            characterData.starships =  await starshipPilotHandler.findStarshipsByURL(characterData.starships);
+            
             var character=  new Character(characterData);
-    
+            
             await character.save( async(err)=>{
         
                 if( err) return  console.log(err); 
@@ -100,7 +99,8 @@ characterCtrl.getAll = async(req,res) =>{
 }
 //Put
 characterCtrl.updateOne = async(req,res) =>{
-    req.body.edited=Date(Date.now);
+    
+    req.body.edited=Date.now;
     try
     {   
         var character         = await Character.findById(req.params.id);

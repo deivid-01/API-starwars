@@ -54,5 +54,24 @@ vehicleHandler.deleteAllPilots = async()=>{
         vehicle.save();       
     });
 }
+vehicleHandler.findVehiclesByURL = async(vehiclesURL)=>{
+    
+    var vehicles_ids = []
+    await Promise.all(vehiclesURL.map(async(vehicleURL)=>{
+        
+        try
+        {
+            var vehicle = await Vehicle.findOne({url:vehicleURL});
+            vehicles_ids.push(vehicle._id);
+        }
+        catch(err)
+        {
+
+        }
+       
+    }))
+
+    return vehicles_ids;
+}
 
 module.exports = vehicleHandler;

@@ -15,8 +15,8 @@ const CharacterSchema = new Schema({
     homeworld : {type: Schema.Types.ObjectId, ref :'Planet'},
     vehicles : [ {type: Schema.Types.ObjectId, ref :'Vehicle'} ],
     starships : [ {type: Schema.Types.ObjectId, ref :'Starship'} ],
-    created : {type:String, default:Date(Date.now)}, 
-    edited : {type:String, default:Date(Date.now)},
+    created : {type:Date, default:Date.now}, 
+    edited : {type:Date, default:Date.now},
     url : {type:String} //Assign own url
 });
 

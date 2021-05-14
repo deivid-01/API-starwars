@@ -1,3 +1,4 @@
+const planet = require('../../models/planet');
 const Planet = require('../../models/planet');
 const planetHandler = {};
 
@@ -55,4 +56,22 @@ planetHandler.deleteAllResidents = async()=>{
     });
 }
 
+planetHandler.findPlanetByURL = async(planet_URL)=>{
+
+    try
+    {
+        if(planet_URL !=null)
+        {
+            var planet = await Planet.findOne({url:planet_URL});
+            //console.log(planet)
+            return planet._id;
+        }
+        return null;
+    }
+    catch(err)
+    {
+        return null;
+    }
+    
+}
 module.exports=planetHandler;

@@ -68,4 +68,26 @@ starshipHandler.deleteAllPilots = async()=>{
     });
 }
 
+starshipHandler.findStarshipsByURL = async(starships_URL)=>{
+    
+    var starships_ids = []
+    await Promise.all(starships_URL.map(async(starship_URL)=>{
+        
+        try
+        {
+            var starship = await Starship.findOne({url:starship_URL});
+            starships_ids.push(starship._id);
+        }
+        catch(err)
+        {
+            
+        }
+       
+    }))
+
+    return starships_ids;
+}
+
+
+
 module.exports = starshipHandler;

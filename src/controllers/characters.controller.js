@@ -29,6 +29,36 @@ characterCtrl.createOne = async(req,res) => {
 
     }    
 }
+characterCtrl.createManyFromSWAPI = async(charactersData) => {
+
+    await Promise.all(charactersData.map(async(characterData)=>{
+        try
+        {   
+        
+            characterData.homeworld =  await planetResidentHandler.findPlanetByURL(characterData.homeworld);
+            characterData.vehicles =  await vehiclePilotHandler.findVehiclesByURL(characterData.vehicles);
+            characterData.starships =  await starshipPilotHandler.findStarshipsByURL(characterData.starships);
+            
+            var character=  new Character(characterData);
+            
+            await character.save( async(err)=>{
+        
+                if( err) return  console.log(err); 
+        
+               await  planetResidentHandler.addResident (character.homeworld,character._id);
+               await  vehiclePilotHandler.addPilotToMany(character.vehicles,character._id);
+               await  starshipPilotHandler.addPilotToMany(character.starships,character._id);
+  
+            });
+        }
+        catch(err)
+        {
+        console.log(err);
+        }
+        
+    }));
+
+}
 //Get
 characterCtrl.getOne = async(req,res) =>{
     try
@@ -69,7 +99,8 @@ characterCtrl.getAll = async(req,res) =>{
 }
 //Put
 characterCtrl.updateOne = async(req,res) =>{
-    req.body.edited=Date(Date.now);
+    
+    req.body.edited=Date.now;
     try
     {   
         var character         = await Character.findById(req.params.id);
@@ -138,10 +169,12 @@ characterCtrl.deleteAll = async(req,res)=>{
         await vehiclePilotHandler.deleteAllPilots();
         await starshipPilotHandler.deleteAllPilots();
         await Character.deleteMany({});
+        if (res!=null)
         return res.status(200).json({"msg":"All Characters has been deleted"});
     }
     catch(err)
     {
+        if(res!=null)
         return res.status(400).json({"msg":err.message});
     }
 }

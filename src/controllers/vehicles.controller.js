@@ -22,6 +22,34 @@ vehicleCtrl.createOne = async(req,res) => {
 
     }  
 }
+vehicleCtrl.createManyFromSWAPI = async(vehiclesData) => {
+
+    await Promise.all(vehiclesData.map(async(vehicleData)=>{
+        delete vehicleData.pilots;
+        delete vehicleData.films;
+        delete vehicleData.created;
+        delete vehicleData.edited;
+        try
+        {
+            var vehicle = new Vehicle(vehicleData);
+    
+            await vehicle.save(async(err)=>{
+                if( err) return  console.log(err.message);  
+                
+                await charVehicleHandler.addVehicleToMany(vehicle.pilots,vehicle._id,);
+                
+                   
+            });
+        }
+        catch(err)
+        {
+           console.log(err);
+    
+        }  
+        
+    }));
+
+}
 //Get
 vehicleCtrl.getOne = async(req,res) =>{
     try
@@ -69,6 +97,7 @@ vehicleCtrl.updateOne = async(req,res) =>{
        await  charVehicleHandler.updateVehicle(vehicle.pilots,req.body.pilots,vehicle._id);
 
         await Vehicle.findByIdAndUpdate(req.params.id,req.body);
+        
         res.status(201).json({msg:' Vehicle uploaded'});
     }
     catch(err)
@@ -101,11 +130,14 @@ vehicleCtrl.deleteAll = async(req,res)=>{
     try{        
       await charVehicleHandler.deleteAllVehicles();
       await Vehicle.deleteMany({});
-      return res.status(200).json({"msg":"All Vehicles has been deleted"});
+      
+      if(res!=null)
+        return res.status(200).json({"msg":"All Vehicles has been deleted"});
   }
   catch(err)
   {
-      return res.status(400).json({"msg":err.message});
+      if(res!=null)
+        return res.status(400).json({"msg":err.message});
   }
 
 }

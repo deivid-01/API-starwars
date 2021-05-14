@@ -2,6 +2,7 @@
 const Planet = require('../models/planet');
 const Vehicle = require('../models/vehicle');
 const Starship = require('../models/starship');
+const character = require('../models/character');
 
 character_planetCtrl = {}
 
@@ -152,20 +153,29 @@ character_planetCtrl.updateResident = async(prevPlanet_id,newPlanet_id,resident_
 }
 character_planetCtrl.addResident = async(planet_id,resident_id)=>{
     //Saving Character in planet
-    var planet = await Planet.findById(planet_id);
-    if(!planet.residents.includes(resident_id))
+    if (planet_id != null)
     {
-        planet.residents.push(resident_id);
-        await planet.save();
+        var planet = await Planet.findById(planet_id);
+        if(!planet.residents.includes(resident_id))
+        {
+            planet.residents.push(resident_id);
+            await planet.save();
+        }
     }
+    
 }
 
 character_planetCtrl.deleteResident = async(planet_id,resident_id)=>
 {
-    var planet =  await Planet.findById(planet_id);
-    planet.residents= planet.residents.filter((resident)=>String(resident).localeCompare(resident_id)!=0)
-    await planet.save();
+    if(planet_id !=null)
+    {
+        var planet =  await Planet.findById(planet_id);
+        planet.residents= planet.residents.filter((resident)=>String(resident).localeCompare(resident_id)!=0)
+        await planet.save();
+    }
+   
 }
+
 
 character_planetCtrl.deleteAllResidents = async()=>{
     var planets = await Planet.find();
@@ -193,13 +203,23 @@ character_planetCtrl.updatePilot = async(prevVehicles_id,newVehicles_id,pilot_id
     }   
 }
 character_planetCtrl.addPilot = async(vehicle_id,pilot_id)=>{
-    //Saving Character in planet
+   
     var vehicle = await Vehicle.findById(vehicle_id);
     if(!vehicle.pilots.includes(pilot_id))
     {
         vehicle.pilots.push(pilot_id);
         await vehicle.save();
     }
+}
+character_planetCtrl.addPilots = async(vehicles_id,pilot_id)=>{
+   
+    if(vehicles_id!=null && vehicles_id.length>0)
+   {
+        await Promise.all(vehicles_id.map(async(vehicle_id)=>{
+            await character_planetCtrl.addPilot(vehicle_id,pilot_id);  
+        }))
+   }
+    
 }
 
 character_planetCtrl.deletePilot = async(vehicle_id,pilot_id)=>
@@ -208,6 +228,13 @@ character_planetCtrl.deletePilot = async(vehicle_id,pilot_id)=>
     vehicle.pilots= vehicle.pilots.filter((pilot)=>String(pilot).localeCompare(pilot_id)!=0)
     await vehicle.save();
 }
+character_planetCtrl.deletePilots = async(vehicles_id,pilot_id)=>
+{
+    await Promise.all(vehicles_id.map(async(vehicle_id)=>{
+        await character_planetCtrl.deletePilot(vehicle_id,pilot_id);  
+    }))
+}
+
 
 character_planetCtrl.deleteAllPilots = async()=>{
     var vehicles = await Vehicle.find();
@@ -226,7 +253,7 @@ character_planetCtrl.updatePilotStarship = async(prevStarships_id,newStarships_i
         if (prevStarships_id.length > 0)
         {
              await Promise.all(prevStarships_id.map(async(prevStarship_id)=>{
-                await character_planetCtrl.deletePilotsStarship(prevStarship_id); 
+                await character_planetCtrl.deletePilotsStarship(prevStarship_id,pilot_id); 
              
             }));
                         
@@ -249,12 +276,37 @@ character_planetCtrl.addPilotStarship = async(starship_id,pilot_id)=>{
     }
 }
 
-character_planetCtrl.deletePilotsStarship = async(starship_id)=>
+character_planetCtrl.addPilotsStarship = async(starships_id,pilot_id)=>{
+    //Saving Character in planet
+    if(starships_id !=null && starships_id.length > 0)
+    {
+        await Promise.all(starships_id.map(async(starship_id)=>{
+            await character_planetCtrl.addPilotStarship(starship_id,pilot_id); 
+         
+        }));
+    }
+
+}
+
+character_planetCtrl.deletePilotsStarship = async(starship_id,pilot_id)=>
 {
     var starship =  await Starship.findById(starship_id);
-    starship.pilots = [];
-    await starship.save();
+    starship.pilots= starship.pilots.filter((pilot)=>String(pilot).localeCompare(pilot_id)!=0)
+    await planet.save();
 }
+
+character_planetCtrl.deleteOneStarshipPilot = async(starships_id,pilot_id)=>
+{
+   if(character.starships !=null && chracter.starship.length>0)
+   {
+    await Promise.all(starships_id.map(async(starship_id)=>{
+        await character_planetCtrl.deletePilotsStarship(starship_id,pilot_id); 
+     
+    }));
+   }
+    
+}
+
 
 character_planetCtrl.deleteAllPilotStarship = async()=>{
     var starships= await Starship.find();

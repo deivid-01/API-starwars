@@ -14,12 +14,11 @@ characterCtrl.createOne = async(req,res) => {
     
             if( err) return  res.status(400).json({"msg":err.message});  
     
-            if(character.homeworld!= null)
-            {
-                character_planetCtrl.addResident(character.homeworld,character._id);
-            }
-    
-            return  res.status(200).json({'msg':'Character saved','id':character._id })    
+           await  character_planetCtrl.addResident(character.homeworld,character._id);
+           await  character_planetCtrl.addPilots(character.vehicles,character._id);
+           await  character_planetCtrl.addPilotsStarship(character.vehicles,character._id);
+            
+           return  res.status(200).json({'msg':'Character saved','id':character._id })    
         });
     }
     catch(err)
@@ -109,13 +108,16 @@ characterCtrl.deleteOne = async( req,res) => {
 
     try
     {
-        var planet_id = (await  Character.findById(req.params.id)).homeworld;
+        var character = await  Character.findById(req.params.id);
         var character_id = req.params.id;
-
-        if ( planet_id!=null)
-        {
-            await character_planetCtrl.deleteResident(planet_id,character_id);
-        }
+        
+        //Delete character from Planet
+        await character_planetCtrl.deleteResident(character.homeworld,character._id);
+        //Delete character from Vehicles
+        await character_planetCtrl.deletePilots(character.vehicles,character._id);
+        //delete character from Starships
+        await  character_planetCtrl.deleteOneStarshipPilot(character.starships,character._id);
+   
 
         await Character.findByIdAndDelete(character_id);
         return res.status(200).json({"msg":"Character deleted"});
@@ -132,6 +134,8 @@ characterCtrl.deleteAll = async(req,res)=>{
     try{
           //Delete characters from Planets
         await character_planetCtrl.deleteAllResidents();
+        await character_planetCtrl.deleteAllPilots();
+        await character_planetCtrl.deleteAllPilotsStarship();
         await Character.deleteMany({});
         return res.status(200).json({"msg":"All Characters has been deleted"});
     }

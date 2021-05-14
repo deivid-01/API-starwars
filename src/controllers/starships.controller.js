@@ -1,6 +1,5 @@
 const Starship = require('../models/starship');
-const character_planetCtrl = require('./character-planet.controller');
-
+const charStarshipHandler = require('../handlers/character/char.starship.handler');
 const starshipCtrl = {}
 //Post
 starshipCtrl.createOne = async(req,res) => {
@@ -11,11 +10,9 @@ starshipCtrl.createOne = async(req,res) => {
 
         await starship.save(async(err)=>{
             if( err) return  res.status(400).json({"msg":err.message});  
+            
+            await charStarshipHandler.addStarshipToMany(starship.pilots,starship._id);
 
-            if (starship.pilots!=null)
-            {
-                await character_planetCtrl.addStarship(starship._id,starship.pilots);
-            }
             return  res.status(200).json({'msg':'Starship saved','id':starship._id })    
         });
     }
@@ -29,7 +26,9 @@ starshipCtrl.createOne = async(req,res) => {
 starshipCtrl.getOne = async(req,res) =>{
     try
     {
-        await Starship.findById(req.params.id).populate('pilots','name').exec(function(err,starship){
+        await Starship.findById(req.params.id).
+        populate('pilots','name').
+        exec(function(err,starship){
             if (err)  return res.status(400).json({"msg":"Starship not found"})
             return res.status(200).json(starship)       
         });    
@@ -47,11 +46,11 @@ starshipCtrl.getAll = async(req,res) =>{
 
     try
     {
-        await Starship.find((err,starships)=>{
-            Starship.populate(starships,{path:"pilots",select:"name"},function(err,starships){
+        await Starship.find().
+        populate('pilots','name').
+        exec(function(err,starships){
                 return res.status(200).json(starships);
             });
-        });
     }
     catch(err)
     {
@@ -67,22 +66,7 @@ starshipCtrl.updateOne = async(req,res) =>{
     {
         var starship = await Starship.findById(req.params.id);
 
-        if( req.body.pilots!=null )
-        {
-            if(req.body.pilots.length > 0)
-            {
-                if(starship.pilots != null)
-                {
-                    //Delete home character
-                    await  character_planetCtrl.deleteStarship(starship._id,starship.pilots);              
-                }
-                    //Add home character        
-                await character_planetCtrl.addStarship(starship._id,req.body.pilots,res);   
-          
-            }
-           
-            
-        }
+        await charStarshipHandler.updateStarship(starship.pilots,req.body.pilots,starship._id);
 
         await Starship.findByIdAndUpdate(req.params.id,req.body);
         res.status(201).json({msg:' Starship uploaded'});
@@ -100,10 +84,9 @@ starshipCtrl.deleteOne = async( req,res) => {
     {
         //deleteHomweworldOfResidents
         var starship = await  Starship.findById(req.params.id);
-        if ( starship.pilots!=null)
-        {
-            await character_planetCtrl.deleteStarship(starship._id,starship.pilots);
-        }
+        
+        await charStarshipHandler.deleteStarshipFromMany(starship.pilots,starship._id);
+
 
         await Starship.findByIdAndDelete(req.params.id);
         return res.status(200).json({"msg":"Starship deleted"});
@@ -117,7 +100,7 @@ starshipCtrl.deleteOne = async( req,res) => {
 
 starshipCtrl.deleteAll = async(req,res)=>{
     try{        
-      await character_planetCtrl.deleteAllStarships();
+      await charStarshipHandler.deleteAllStarships();
       await Starship.deleteMany({});
       return res.status(200).json({"msg":"All Starships has been deleted"});
   }

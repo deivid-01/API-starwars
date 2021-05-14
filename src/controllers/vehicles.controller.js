@@ -1,6 +1,5 @@
 const Vehicle = require('../models/vehicle');
-const character_planetCtrl = require('./character-planet.controller');
-
+const charVehicleHandler = require('../handlers/character/char.vehicle.handler');
 const vehicleCtrl = {}
 //Post
 vehicleCtrl.createOne = async(req,res) => {
@@ -11,11 +10,9 @@ vehicleCtrl.createOne = async(req,res) => {
 
         await vehicle.save(async(err)=>{
             if( err) return  res.status(400).json({"msg":err.message});  
-
-            if (vehicle.pilots!=null)
-            {
-                await character_planetCtrl.addVehicle(vehicle._id,vehicle.pilots);
-            }
+            
+            await charVehicleHandler.addVehicleToMany(vehicle.pilots,vehicle._id,);
+            
             return  res.status(200).json({'msg':'Vehicle saved','id':vehicle._id })    
         });
     }
@@ -29,7 +26,9 @@ vehicleCtrl.createOne = async(req,res) => {
 vehicleCtrl.getOne = async(req,res) =>{
     try
     {
-        await Vehicle.findById(req.params.id).populate('pilots','name').exec(function(err,vehicle){
+        await Vehicle.findById(req.params.id).
+        populate('pilots','name').
+        exec(function(err,vehicle){
             if (err)  return res.status(400).json({"msg":"Vehicle not found"})
             return res.status(200).json(vehicle)       
         });    
@@ -47,11 +46,11 @@ vehicleCtrl.getAll = async(req,res) =>{
 
     try
     {
-        await Vehicle.find((err,vehicles)=>{
-            Vehicle.populate(vehicles,{path:"pilots",select:"name"},function(err,vehicles){
+        await Vehicle.find().
+        populate('pilots','name').
+        exec(function(err,vehicles){
                 return res.status(200).json(vehicles);
             });
-        });
     }
     catch(err)
     {
@@ -67,16 +66,7 @@ vehicleCtrl.updateOne = async(req,res) =>{
     {
         var vehicle = await Vehicle.findById(req.params.id);
 
-        if( req.body.pilots!=null)
-        {
-            if(vehicle.pilots != null)
-            {
-                //Delete home character
-                await  character_planetCtrl.deleteVehicle(vehicle._id,vehicle.pilots);              
-            }
-                //Add home character        
-            await character_planetCtrl.addVehicle(vehicle._id,req.body.pilots,res);   
-        }
+       await  charVehicleHandler.updateVehicle(vehicle.pilots,req.body.pilots,vehicle._id);
 
         await Vehicle.findByIdAndUpdate(req.params.id,req.body);
         res.status(201).json({msg:' Vehicle uploaded'});
@@ -94,10 +84,8 @@ vehicleCtrl.deleteOne = async( req,res) => {
     {
         //deleteHomweworldOfResidents
         var vehicle = await  Vehicle.findById(req.params.id);
-        if ( vehicle.pilots!=null)
-        {
-            await character_planetCtrl.deleteVehicle(vehicle._id,vehicle.pilots);
-        }
+
+        await charVehicleHandler.deleteVehicleFromMany(vehicle.pilots,vehicle._id);
 
         await Vehicle.findByIdAndDelete(req.params.id);
         return res.status(200).json({"msg":"Vehicle deleted"});
@@ -111,7 +99,7 @@ vehicleCtrl.deleteOne = async( req,res) => {
 
 vehicleCtrl.deleteAll = async(req,res)=>{
     try{        
-      await character_planetCtrl.deleteAllVehicles();
+      await charVehicleHandler.deleteAllVehicles();
       await Vehicle.deleteMany({});
       return res.status(200).json({"msg":"All Vehicles has been deleted"});
   }

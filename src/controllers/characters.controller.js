@@ -1,5 +1,7 @@
 const Character = require('../models/character');
-const character_planetCtrl = require('./character-planet.controller');
+const planetResidentHandler = require('../handlers/planet/planet.resident.handler');
+const vehiclePilotHandler = require('../handlers/vehicle/vehicle.pilot.handler');
+const starshipPilotHandler = require('../handlers/starship/starship.pilot.handler');
 
 
 const characterCtrl = {}
@@ -14,9 +16,9 @@ characterCtrl.createOne = async(req,res) => {
     
             if( err) return  res.status(400).json({"msg":err.message});  
     
-           await  character_planetCtrl.addResident(character.homeworld,character._id);
-           await  character_planetCtrl.addPilots(character.vehicles,character._id);
-           await  character_planetCtrl.addPilotsStarship(character.vehicles,character._id);
+           await  planetResidentHandler.addResident (character.homeworld,character._id);
+           await  vehiclePilotHandler.addPilotToMany(character.vehicles,character._id);
+           await  starshipPilotHandler.addPilotToMany(character.starships,character._id);
             
            return  res.status(200).json({'msg':'Character saved','id':character._id })    
         });
@@ -46,12 +48,11 @@ characterCtrl.getOne = async(req,res) =>{
     }
 }
 
-
 characterCtrl.getAll = async(req,res) =>{
 
     try
     {
-        await Character.find(req.params.id).
+        await Character.find().
         populate('homeworld','name').
         populate('vehicles','name').
         populate('starships','name').
@@ -85,9 +86,9 @@ characterCtrl.updateOne = async(req,res) =>{
 
  
         //Update data
-        await character_planetCtrl.updateResident(previousPlanet,newPlanet,character._id);   
-        await character_planetCtrl.updatePilot(previousVehicles,newVehicles,character._id);   
-        await character_planetCtrl.updatePilotStarship(previousStarships,newStarships,character._id);   
+        await planetResidentHandler.updateResident(previousPlanet,newPlanet,character._id);   
+        await vehiclePilotHandler.updatePilot(previousVehicles,newVehicles,character._id);   
+        await starshipPilotHandler.updatePilot(previousStarships,newStarships,character._id);   
     
         await Character.findByIdAndUpdate(req.params.id,req.body);
         
@@ -112,11 +113,11 @@ characterCtrl.deleteOne = async( req,res) => {
         var character_id = req.params.id;
         
         //Delete character from Planet
-        await character_planetCtrl.deleteResident(character.homeworld,character._id);
+        await planetResidentHandler.deleteResident(character.homeworld,character._id);
         //Delete character from Vehicles
-        await character_planetCtrl.deletePilots(character.vehicles,character._id);
+        await vehiclePilotHandler.deletePilotFromMany(character.vehicles,character._id);
         //delete character from Starships
-        await  character_planetCtrl.deleteOneStarshipPilot(character.starships,character._id);
+        await  starshipPilotHandler.deletePilotFromMany(character.starships,character._id);
    
 
         await Character.findByIdAndDelete(character_id);
@@ -133,9 +134,9 @@ characterCtrl.deleteAll = async(req,res)=>{
   
     try{
           //Delete characters from Planets
-        await character_planetCtrl.deleteAllResidents();
-        await character_planetCtrl.deleteAllPilots();
-        await character_planetCtrl.deleteAllPilotsStarship();
+        await planetResidentHandler.deleteAllResidents();
+        await vehiclePilotHandler.deleteAllPilots();
+        await starshipPilotHandler.deleteAllPilots();
         await Character.deleteMany({});
         return res.status(200).json({"msg":"All Characters has been deleted"});
     }

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "mongoose": "^5.12.8",
     "morgan": "^1.10.0",
@@ -19,9 +20,7 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "engines":{
+  "engines": {
     "node": "14.16.1"
   }
-  
 }
-

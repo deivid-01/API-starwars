@@ -10,11 +10,6 @@ const swapiCtrl = {};
 
 const BASE_URL = "https://swapi.dev/api"
 
-swapiCtrl.test = async(req,res)=>{
-  console.log(req.body.url);
-  var  planet =  await planetResidentHandler.findPlanetByURL(req.body.url);
-   res.json(planet);
-}
 
 swapiCtrl.resetData = async(req,res)=>{
     

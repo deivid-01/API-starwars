@@ -3,21 +3,28 @@
     "info": {
       "version": "1.0.0",
       "title": "Custom SWAPI",
-      "description": "Custom swapi of SWAPI"
+      "description": 
+      "This API provides  a set of  Planets, Spaceships, Vehicles and Characters from Star Wars. All data was taken from Swapi https://swapi.dev/"            
     },
     "tags": [
       {
-        "name": "Planets",
-        "description": "Planets of Star Wars"
+        "name": "Characters"
+      },
+      {
+        "name": "Planets"
+      },
+      {
+        "name": "Starships"
+
+      },
+      {
+        "name": "Vehicles"
       }
 
     ],
-    "consumes": [
-      "application/json"
-    ],
-    "produces": [
-      "application/json"
-    ],
+    "consumes": "application/json",
+    "produces":  "application/json"
+    ,
     "securityDefinitions": {
         "ApiKeyAuth":{
           "type": "apiKey",
@@ -25,40 +32,882 @@
           "name": "authorization"
         }
     },
-    "paths": {
-      "/api/planets": {
-        "get": {
-          "summary": "Get planets",
-          "tags": [
-            "Planets"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "Gets planets success",
-              "schema":
-              {
-              "type":"array",
-              "items":
-              {
-                "$ref": "#/definitions/Planet"
+    
+    "paths": {   
+            "/api/characters/{id}": {
+              "get": {
+                "summary": "Get character by Id",
+                "tags": [
+                  "Characters"
+                ],
+                "description":"Returns a single Character",
+                "produces": [
+                  "application/json"
+                ],
+                "parameters":[
+                  {"name":"id","in":"path","description":"ID of Character to Return", "required":true,"type":"string","format":"byte"}
+                ],
+                "responses": {
+                  "200": {
+                    "description": "Succesful operation",
+                    "schema":{
+                      "$ref": "#/definitions/Character"
+                    }
+                    
+                    },
+                    "400":{
+                      "description": "Character not found"
+                    },
+                    "500":{
+                      "description": "Server Error"
+                    }
+                  }
+                
+                
+              },
+              "put": {
+                "summary": "Update character by  Id",
+                "tags": [
+                  "Characters"
+                ],
+                "description":"Update a single Character",
+                "produces": [
+                  "application/json"
+                ],
+                "parameters":[
+                  {"name":"id","in":"path","description":"ID of Character to Return", "required":true,"type":"string","format":"byte"},
+                  {
+                    "name": "body",
+                    "in": "body",
+                    "description": "ssr",
+                    "schema": {
+                      "$ref": "#/definitions/Character"
+          
+                    }
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "Succesful operation",
+                    "schema":{
+                      "type": "string",
+                      "example":
+                        {
+                          "msg":"Character updated"
+                        }
+                    }
+                    
+                    },
+                    "400":{
+                      "description": "Character not found"
+                    },
+                    "500":{
+                      "description": "Server Error"
+                    }
+                  }
+                
+                
+              },
+              "delete":{
+                "summary": "Delete character by  Id",
+                "tags": [
+                  "Characters"
+                ],
+                "description":"Delete a single Character",
+                "produces": [
+                  "application/json"
+                ],
+                "parameters":[
+                  {"name":"id","in":"path","description":"ID of Character to delete", "required":true,"type":"string","format":"byte"}
+                ],
+                "responses": {
+                  "200": {
+                    "description": "Succesful operation",
+                    "schema":{
+                      "type": "string",
+                      "example":
+                        {
+                          "msg":"Character deleted"
+                        }
+                    }
+                    
+                    },
+                    "400":{
+                      "description": "Character not found"
+                    },
+                    "500":{
+                      "description": "Server Error"
+                    }
+                  }
+                
+                
               }
-               
-              }
+              
+              
+              
             },
-            "500":{
-              "description": "Database connection fail"
-            }
-          }
-        }
-      }
+            "/api/characters": {
+              "get": {
+                "summary": "Get all characters",
+                "tags": [
+                  "Characters"
+                ],
+                "produces": [
+                  "application/json"
+                ],
+                "responses": {
+                  "200": {
+                    "description": "Succesful operation",
+                    "schema":
+                    {
+                    "type":"array",
+                    "items":
+                    {
+                      "$ref": "#/definitions/Character"
+                    }
+                    
+                    }
+                  },
+                  "500":{
+                    "description": "Database connection fail"
+                  }
+                }
+              },
+              "post": {
+                "summary": "Creates Character",
+                "tags": [
+                  "Characters"
+                ],
+                "description":"Creates a single Character",
+                "produces": [
+                  "application/json"
+                ],
+                "parameters":[ {
+                  "name": "body",
+                  "in": "body",
+                  "description": "PLanet properties",
+                  "schema": {
+                    "$ref": "#/definitions/Character"
+          
+                  }
+                } 
+                  ],
+                "responses": {
+                  "200": {
+                    "description": "Succesful operation",
+                    "schema":{
+                      "type": "string",
+                      "example":
+                        {
+                          "msg":"Character created",
+                          "id":"character id"
+                        }
+                      
+                    }
+                    
+                    },
+                    "400":{
+                      "description": "Character not found"
+                    },
+                    "500":{
+                      "description": "Server Error"
+                    }
+                  }
+                
+                
+              },
+              "delete": {
+                "summary": "Delete all Characters",
+                "tags": [
+                  "Characters"
+                ],
+                "description":"Deletes all characters",
+                "produces": [
+                  "application/json"
+                ],
+                "responses": {
+                  "200": {
+                    "description": "Succesful operation",
+                    "schema":{
+                      "type": "string",
+                      "example":
+                        {
+                          "msg":"All characters deleted"
+                        }
+                      
+                    }
+                    
+                    },
+                    "500":{
+                      "description": "Server Error"
+                    }
+                  }
+                
+                
+              }
+              
+            }, 
+              "/api/planets/{id}": {
+                "get": {
+                  "summary": "Get planet by Id",
+                  "tags": [
+                    "Planets"
+                  ],
+                  "description":"Returns a single Planet",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[
+                    {"name":"id","in":"path","description":"ID of Planet to Return", "required":true,"type":"string","format":"byte"}
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "$ref": "#/definitions/Planet"
+                      }
+                      
+                      },
+                      "400":{
+                        "description": "Planet not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                },
+                "put": {
+                  "summary": "Update planet by  Id",
+                  "tags": [
+                    "Planets"
+                  ],
+                  "description":"Update a single Planet",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[
+                    {"name":"id","in":"path","description":"ID of Planet to Return", "required":true,"type":"string","format":"byte"},
+                    {
+                      "name": "body",
+                      "in": "body",
+                      "description": "ssr",
+                      "schema": {
+                        "$ref": "#/definitions/Planet"
+          
+                      }
+                    }
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"Planet updated"
+                          }
+                      }
+                      
+                      },
+                      "400":{
+                        "description": "Planet not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                },
+                "delete":{
+                  "summary": "Delete planet by  Id",
+                  "tags": [
+                    "Planets"
+                  ],
+                  "description":"Delete a single Planet",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[
+                    {"name":"id","in":"path","description":"ID of Planet to delete", "required":true,"type":"string","format":"byte"}
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"Planet deleted"
+                          }
+                      }
+                      
+                      },
+                      "400":{
+                        "description": "Planet not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                }
+                
+                
+                
+              },
+              "/api/planets": {
+                "get": {
+                  "summary": "Get all planets",
+                  "tags": [
+                    "Planets"
+                  ],
+                  "produces": [
+                    "application/json"
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":
+                      {
+                      "type":"array",
+                      "items":
+                      {
+                        "$ref": "#/definitions/Planet"
+                      }
+                      
+                      }
+                    },
+                    "500":{
+                      "description": "Database connection fail"
+                    }
+                  }
+                },
+                "post": {
+                  "summary": "Creates Planet",
+                  "tags": [
+                    "Planets"
+                  ],
+                  "description":"Creates a single Planet",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[ {
+                    "name": "body",
+                    "in": "body",
+                    "description": "PLanet properties",
+                    "schema": {
+                      "$ref": "#/definitions/Planet"
+
+                    }
+                  } 
+                    ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"Planet created",
+                            "id":"planet id"
+                          }
+                        
+                      }
+                      
+                      },
+                      "400":{
+                        "description": "Planet not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                },
+                "delete": {
+                  "summary": "Delete all Planets",
+                  "tags": [
+                    "Planets"
+                  ],
+                  "description":"Deletes all planets",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"All planets deleted"
+                          }
+                        
+                      }
+                      
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                }
+                
+              },    "/api/starships/{id}": {
+                "get": {
+                  "summary": "Get starship by Id",
+                  "tags": [
+                    "Starships"
+                  ],
+                  "description":"Returns a single Starship",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[
+                    {"name":"id","in":"path","description":"ID of Starship to Return", "required":true,"type":"string","format":"byte"}
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "$ref": "#/definitions/Starship"
+                      }
+                       
+                      },
+                      "400":{
+                        "description": "Starship not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                   
+                  
+                },
+                "put": {
+                  "summary": "Update starship by  Id",
+                  "tags": [
+                    "Starships"
+                  ],
+                  "description":"Update a single Starship",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[
+                    {"name":"id","in":"path","description":"ID of Starship to Return", "required":true,"type":"string","format":"byte"},
+                    {
+                      "name": "body",
+                      "in": "body",
+                      "description": "ssr",
+                      "schema": {
+                        "$ref": "#/definitions/Starship"
+            
+                      }
+                    }
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"Starship updated"
+                          }
+                      }
+                       
+                      },
+                      "400":{
+                        "description": "Starship not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                   
+                  
+                },
+                "delete":{
+                  "summary": "Delete starship by  Id",
+                  "tags": [
+                    "Starships"
+                  ],
+                  "description":"Delete a single Starship",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[
+                    {"name":"id","in":"path","description":"ID of Starship to delete", "required":true,"type":"string","format":"byte"}
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"Starship deleted"
+                          }
+                      }
+                       
+                      },
+                      "400":{
+                        "description": "Starship not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                   
+                  
+                }
+                
+                
+                
+              },
+              "/api/starships": {
+                "get": {
+                  "summary": "Get all starships",
+                  "tags": [
+                    "Starships"
+                  ],
+                  "produces": [
+                    "application/json"
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":
+                      {
+                      "type":"array",
+                      "items":
+                      {
+                        "$ref": "#/definitions/Starship"
+                      }
+                       
+                      }
+                    },
+                    "500":{
+                      "description": "Database connection fail"
+                    }
+                  }
+                },
+                "post": {
+                  "summary": "Creates Starship",
+                  "tags": [
+                    "Starships"
+                  ],
+                  "description":"Creates a single Starship",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[ {
+                    "name": "body",
+                    "in": "body",
+                    "description": "PLanet properties",
+                    "schema": {
+                      "$ref": "#/definitions/Starship"
+            
+                    }
+                   } 
+                    ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"Starship created",
+                            "id":"starship id"
+                          }
+                        
+                      }
+                       
+                      },
+                      "400":{
+                        "description": "Starship not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                   
+                  
+                },
+                "delete": {
+                  "summary": "Delete all Starships",
+                  "tags": [
+                    "Starships"
+                  ],
+                  "description":"Deletes all starships",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"All starships deleted"
+                          }
+                        
+                      }
+                       
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                   
+                  
+                }
+                
+              }
+              ,
+              "/api/vehicles/{id}": {
+                "get": {
+                  "summary": "Get vehicle by Id",
+                  "tags": [
+                    "Vehicles"
+                  ],
+                  "description":"Returns a single Vehicle",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[
+                    {"name":"id","in":"path","description":"ID of Vehicle to Return", "required":true,"type":"string","format":"byte"}
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "$ref": "#/definitions/Vehicle"
+                      }
+                      
+                      },
+                      "400":{
+                        "description": "Vehicle not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                },
+                "put": {
+                  "summary": "Update vehicle by  Id",
+                  "tags": [
+                    "Vehicles"
+                  ],
+                  "description":"Update a single Vehicle",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[
+                    {"name":"id","in":"path","description":"ID of Vehicle to Return", "required":true,"type":"string","format":"byte"},
+                    {
+                      "name": "body",
+                      "in": "body",
+                      "description": "ssr",
+                      "schema": {
+                        "$ref": "#/definitions/Vehicle"
+            
+                      }
+                    }
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"Vehicle updated"
+                          }
+                      }
+                      
+                      },
+                      "400":{
+                        "description": "Vehicle not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                },
+                "delete":{
+                  "summary": "Delete vehicle by  Id",
+                  "tags": [
+                    "Vehicles"
+                  ],
+                  "description":"Delete a single Vehicle",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[
+                    {"name":"id","in":"path","description":"ID of Vehicle to delete", "required":true,"type":"string","format":"byte"}
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"Vehicle deleted"
+                          }
+                      }
+                      
+                      },
+                      "400":{
+                        "description": "Vehicle not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                }
+                
+                
+                
+              },
+              "/api/vehicles": {
+                "get": {
+                  "summary": "Get all vehicles",
+                  "tags": [
+                    "Vehicles"
+                  ],
+                  "produces": [
+                    "application/json"
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":
+                      {
+                      "type":"array",
+                      "items":
+                      {
+                        "$ref": "#/definitions/Vehicle"
+                      }
+                      
+                      }
+                    },
+                    "500":{
+                      "description": "Database connection fail"
+                    }
+                  }
+                },
+                "post": {
+                  "summary": "Creates Vehicle",
+                  "tags": [
+                    "Vehicles"
+                  ],
+                  "description":"Creates a single Vehicle",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "parameters":[ {
+                    "name": "body",
+                    "in": "body",
+                    "description": "PLanet properties",
+                    "schema": {
+                      "$ref": "#/definitions/Vehicle"
+            
+                    }
+                  } 
+                    ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"Vehicle created",
+                            "id":"vehicle id"
+                          }
+                        
+                      }
+                      
+                      },
+                      "400":{
+                        "description": "Vehicle not found"
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                },
+                "delete": {
+                  "summary": "Delete all Vehicles",
+                  "tags": [
+                    "Vehicles"
+                  ],
+                  "description":"Deletes all vehicles",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesful operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"All vehicles deleted"
+                          }
+                        
+                      }
+                      
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                }
+                
+              }
     },
 
     "definitions": {
+      "Character": {
+        "properties": {
+        
+          "name" : { "type": "string"},
+          "height" : { "type": "string"},  
+          "mass" : { "type": "string"},  
+          "hair_color" : { "type": "string"},  
+          "skin_color" : { "type": "string"},  
+          "eye_color" : { "type": "string"},  
+          "birth_year" : {"type": "string"},  
+          "gender" : {"type": "string"},  
+          "homeworld" : {"type": "string"},  
+          "vehicles" :{"type":"array","items":{"type":"string"}},
+          "starships" :{"type":"array","items":{"type":"string"}}
+        }
+      },
       "Planet": {
         "properties": {
+        
           "name" : { "type": "string"},
           "rotation_period" : { "type": "string"},  
           "orbital_period" : { "type": "string"},  
@@ -68,12 +917,50 @@
           "terrain" : { "type": "string"},  
           "surface_water" : {"type": "string"},  
           "population" : {"type": "string"},  
-          "residents" :{"type": "ObjectId"},
-          "created" : {"type": "string"},  
-          "edited" : {"type": "string"}, 
-          "url" : {"type": "string"}
+          "residents" :{"type":"array","items":{"type":"string"}}
+
+        }
+      },
+      "Starship": {
+        "properties": {
+        
+          "name" : { "type": "string"},
+          "model" : { "type": "string"},  
+          "manufacturer" : { "type": "string"},  
+          "cost_in_credits" : { "type": "string"},  
+          "length" : { "type": "string"},  
+          "max_atmosphering_speed" : { "type": "string"},  
+          "crew" : { "type": "string"},  
+          "passengers" : {"type": "string"},  
+          "cargo_capacity" : {"type": "string"},  
+          "consumables" : {"type": "string"},  
+          "hyperdrive_rating" : {"type": "string"}, 
+          "MGLT" : {"type": "string"},           
+          "starship_class" : {"type": "string"},  
+          "pilots" :{"type":"array","items":{"type":"string"}}
+
+        }
+      },
+      "Vehicle": {
+        "properties": {
+        
+          "name" : { "type": "string"},
+          "model" : { "type": "string"},  
+          "manufacturer" : { "type": "string"},  
+          "cost_in_credits" : { "type": "string"},  
+          "length" : { "type": "string"},  
+          "max_atmosphering_speed" : { "type": "string"},  
+          "crew" : { "type": "string"},  
+          "passengers" : {"type": "string"},  
+          "cargo_capacity" : {"type": "string"},  
+          "consumables" : {"type": "string"},
+          "vehicle_class" : {"type":"string"},       
+          "pilots" :{"type":"array","items":{"type":"string"}}
+
         }
       }
+
+      
 
 
 

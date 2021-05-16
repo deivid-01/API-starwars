@@ -1,0 +1,86 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Custom SWAPI",
+      "description": "Custom swapi of SWAPI"
+    },
+    "tags": [
+      {
+        "name": "Planets",
+        "description": "Planets of Star Wars"
+      }
+
+    ],
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ],
+    "securityDefinitions": {
+        "ApiKeyAuth":{
+          "type": "apiKey",
+          "in": "headers",
+          "name": "authorization"
+        }
+    },
+    "paths": {
+      "/api/planets": {
+        "get": {
+          "summary": "Get planets",
+          "tags": [
+            "Planets"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Gets planets success",
+              "schema":
+              {
+              "type":"array",
+              "items":
+              {
+                "$ref": "#/definitions/Planet"
+              }
+               
+              }
+            },
+            "500":{
+              "description": "Database connection fail"
+            }
+          }
+        }
+      }
+    },
+
+    "definitions": {
+      "Planet": {
+        "properties": {
+          "name" : { "type": "string"},
+          "rotation_period" : { "type": "string"},  
+          "orbital_period" : { "type": "string"},  
+          "diameter" : { "type": "string"},  
+          "climate" : { "type": "string"},  
+          "gravity" : { "type": "string"},  
+          "terrain" : { "type": "string"},  
+          "surface_water" : {"type": "string"},  
+          "population" : {"type": "string"},  
+          "residents" :{"type": "ObjectId"},
+          "created" : {"type": "string"},  
+          "edited" : {"type": "string"}, 
+          "url" : {"type": "string"}
+        }
+      }
+
+
+
+
+    }
+  }

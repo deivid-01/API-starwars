@@ -41,7 +41,10 @@ build/Release
 node_modules/
 jspm_packages/
 variables.env
-
+planets.json
+starships.json
+vehicles.json
+characters.json
 # TypeScript v1 declaration files
 typings/
 

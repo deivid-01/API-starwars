@@ -19,6 +19,10 @@
       },
       {
         "name": "Vehicles"
+      },
+      {
+        "name": "Restore Data",
+        "description": "WARNING: Restore data to default values of SWAPI"
       }
 
     ],
@@ -885,7 +889,39 @@
                   
                 }
                 
+              },
+              "/api/restore/":{
+                "delete": {
+      
+                  "tags": [
+                    "Restore Data"
+                  ],
+                  "description":"Reset database and get values from SWAPI",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Succesfull Operation",
+                      "schema":{
+                        "type": "string",
+                        "example":
+                          {
+                            "msg":"Succesfull restauration"
+                          }
+                        
+                      }
+                      
+                      },
+                      "500":{
+                        "description": "Server Error"
+                      }
+                    }
+                  
+                  
+                }
               }
+              
     },
 
     "definitions": {

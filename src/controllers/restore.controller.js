@@ -1,29 +1,29 @@
 const fetch = require("node-fetch");
 
-const characterCtrl = require('../controllers/characters.controller');
-const planetCtrl = require('../controllers/planets.controller');
-const starshipCtrl = require('../controllers/starships.controller');
-const vehicleCtrl = require('../controllers/vehicles.controller');
+const characterCtrl = require('./characters.controller');
+const planetCtrl = require('./planets.controller');
+const starshipCtrl = require('./starships.controller');
+const vehicleCtrl = require('./vehicles.controller');
 const planetResidentHandler = require('../handlers/planet/planet.resident.handler');
 
-const swapiCtrl = {};
+const restoreCtrl = {};
 
 const BASE_URL = "https://swapi.dev/api"
 
 
-swapiCtrl.resetData = async(req,res)=>{
+restoreCtrl.resetData = async(req,res)=>{
     
-    await swapiCtrl.deleteAll();
+    await restoreCtrl.deleteAll();
 
-    await swapiCtrl.createPlanets();
-    await swapiCtrl.createVehicles();
-    await swapiCtrl.createStarships();
-    await swapiCtrl.createCharacters();
+    await restoreCtrl.createPlanets();
+    await restoreCtrl.createVehicles();
+    await restoreCtrl.createStarships();
+    await restoreCtrl.createCharacters();
     res.status(200).json({'msg':'Data from SWAPI created'})
 
 }
 
-swapiCtrl.createPlanets = async (res)=>{
+restoreCtrl.createPlanets = async (res)=>{
     
    var actualPage = 1;
    do
@@ -43,7 +43,7 @@ swapiCtrl.createPlanets = async (res)=>{
    console.log("PLANETS  CREATED");
 }
 
-swapiCtrl.createVehicles = async ()=>{
+restoreCtrl.createVehicles = async ()=>{
     
    var actualPage = 1;
    do
@@ -63,7 +63,7 @@ swapiCtrl.createVehicles = async ()=>{
    console.log("VEHICLES  CREATED");
 }
 
-swapiCtrl.createStarships = async ()=>{
+restoreCtrl.createStarships = async ()=>{
     
    var actualPage = 1;
    do
@@ -83,7 +83,7 @@ swapiCtrl.createStarships = async ()=>{
    console.log("STARSHIPS  CREATED");
 }
 
-swapiCtrl.createCharacters = async ()=>{
+restoreCtrl.createCharacters = async ()=>{
     
    var actualPage = 1;
    do
@@ -103,7 +103,7 @@ swapiCtrl.createCharacters = async ()=>{
    console.log("CHRACTERS  CREATED");
 }
 
-swapiCtrl.deleteAll = async () =>
+restoreCtrl.deleteAll = async () =>
 {
    await characterCtrl.deleteAll();
    await vehicleCtrl.deleteAll();
@@ -116,4 +116,4 @@ swapiCtrl.deleteAll = async () =>
 
 
 
-module.exports = swapiCtrl;
+module.exports = restoreCtrl;

@@ -4,8 +4,7 @@ const planet = require('../models/planet');
 const planetCtrl = {}
 //Post
 planetCtrl.createOne = async(req,res) => {
-    console.log("HOLAAS");
-    console.log(res);
+
     try
     {   
         var planet = new Planet(req.body);

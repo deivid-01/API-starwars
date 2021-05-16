@@ -3,16 +3,13 @@ const Character = require('../../models/character');
 const charStarshipHdlr = {}
 
 
-//....................
-
-//--------------------------------------------------------
 charStarshipHdlr.updateStarship= async(prevPilots_id,newPilots_id,starship_id)=>{
    
     if( newPilots_id!=null)
     {
         if(prevPilots_id!= null )
         {
-            //Delete home character
+            //Delete pilots from  starships
             await  charStarshipHdlr.deleteStarshipFromMany(prevPilots_id,starship_id);              
         }
             //Add home character        

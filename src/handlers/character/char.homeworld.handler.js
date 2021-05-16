@@ -9,8 +9,6 @@ charHomeworldHdlr.updateHomeworld= async(prevResidents_id,newResidents_id,planet
         if(prevResidents_id!= null && prevResidents_id.length>0)
         {
             //Delete  character in other planets
-            console.log(prevResidents_id);
-            console.log(planet_id);
             await planetResidentHandler.deleteResidentFromMany(planet_id,prevResidents_id);              
         }
             //Add home character     
